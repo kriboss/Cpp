@@ -1,47 +1,24 @@
 #include <iostream>
+#include <string>
 #include <cctype>
 
-class Megaphone {
-	public:
-		char **message;
-};
-
-char **to_upper(char *argv[])
-{
-	int i = 0;
-	int j = 0;
-	char **str;
-
-	str = argv;
-	while (argv[i])
+int main(int argc, char** argv) {
+	std::string res;
+    if (argc == 1) {
+        std::cout << "* LOUD AND UNBEARABLE FEEDBACK NOISE *" << std::endl;
+    } 
+	else
 	{
-		j = 0;
-		while (argv[i][j])
+        for (int i = 1; i < argc; ++i)
 		{
-			argv[i][j] = std::toupper(argv[i][j]);
-			j++;
-		}
-		i++;
-	}
-	return str;
+            res = argv[i];
+            for (size_t j = 0; j < res.length(); ++j)
+			{
+                std::cout << (char)toupper(res[j]);
+            }
+        }
+        std::cout << std::endl;
+    }
+    return 0;
 }
 
-int	main(int argc, char *argv[])
-{
-	Megaphone megaphone;
-	int i = 1;
-
-	if (argc == 1)
-	{
-		std::cout << "* LOUD AND UNBEARABLE FEEDBACK NOISE *\n";
-		return 0;
-	}
-	megaphone.message = to_upper(argv);
-	while (megaphone.message[i])
-	{
-		std::cout << megaphone.message[i] << " ";
-		i++;
-	}
-	std::cout << std::endl;
-	return 0;
-}

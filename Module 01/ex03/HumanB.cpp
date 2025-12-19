@@ -12,3 +12,5 @@ void HumanB::attack() {
 	else
 		std::cout << this->name << " has no weapon to attack with" << std::endl;
 }
+
+HumanB::~HumanB() {}
