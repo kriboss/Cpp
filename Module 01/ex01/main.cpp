@@ -1,9 +1,6 @@
 #include "Zombie.hpp"
 
 int main() {
-	// Zombie *z = newZombie("HeapZombie");
-	// z->announce();
-	// delete z;
 	Zombie* horde = zombieHorde(5, "HordeZombie");
 	if (!horde) {
 		std::cout << "Failed to create zombie horde." << std::endl;
@@ -13,6 +10,5 @@ int main() {
 		horde[i].announce();
 	}
 	delete[] horde;
-
 	return 0;
 }

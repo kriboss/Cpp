@@ -19,6 +19,7 @@ class PhoneBook {
 	private:
 		Contact contacts[8];
 		int index;
+		int contactCount;
 	public:
 		PhoneBook();
 		void ADD();

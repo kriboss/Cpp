@@ -2,7 +2,7 @@
 
 Weapon::Weapon(std::string type) : type(type) {}
 
-std::string Weapon::getType() const {
+const std::string& Weapon::getType() const {
 	return this->type;
 }
 

@@ -1,12 +1,11 @@
 #include "Phonebook.hpp"
 
-PhoneBook::PhoneBook() : index(0) {}
+PhoneBook::PhoneBook() : index(0), contactCount(0) {}
 
 void PhoneBook::ADD()
 {
 	if (index == 8)
 		index = 0;
-	std::cout << "Adding contact at index " << index << "\n";
 	std::cout << "Enter contact first name: ";
 	std::getline(std::cin, contacts[index].first_name);
 	std::cout << "Enter contact last name: ";
@@ -17,21 +16,34 @@ void PhoneBook::ADD()
 	std::getline(std::cin, contacts[index].phone_number);
 	std::cout << "Enter contact darkest secret: ";
 	std::getline(std::cin, contacts[index].darkest_secret);
+	if (contacts[index].first_name == "" || contacts[index].last_name == "" || contacts[index].nickname == ""
+		|| contacts[index].phone_number == "" || contacts[index].darkest_secret == "")
+	{
+		std::cout << "All fields are required. Contact not added.\n";
+		ADD();
+		return;
+	}
 	index++;
+	if (contactCount < 8)
+		contactCount++;
 }
 
 void PhoneBook::SEARCH()
 {
-	if (index == 0)
+	if (contactCount == 0)
 	{
 		std::cout << "No contacts available\n";
 		return;
 	}
 	std::cout << "Contacts:\n";
-	int i = 0;
-	while (contacts[i].first_name != "")
+	std::cout << std::setw(10) << "Index" << "|"
+	          << std::setw(10) << "First Name" << "|"
+	          << std::setw(10) << "Last Name" << "|"
+	          << std::setw(10) << "Nickname" << "|\n";
+	std::cout << "--------------------------------------------\n";
+	for (int i = 0; i < contactCount; i++)
 	{
-		std::cout << i + 1 << "|";
+		std::cout << std::setw(10) << i + 1 << "|";
 		if (contacts[i].first_name.length() > 10)
 			std::cout << contacts[i].first_name.substr(0, 9) + ".|";
 		else
@@ -44,13 +56,12 @@ void PhoneBook::SEARCH()
 			std::cout << contacts[i].nickname.substr(0, 9) + ".|\n";
 		else
 			std::cout << std::setw(10) << contacts[i].nickname << "|\n";
-		i++;
 	}
 	std::cout << "Enter index to view details: ";
 	std::string input;
 	std::getline(std::cin, input);
 	int idx = atoi(input.c_str());
-	if (idx < 1 || idx > index)
+	if (idx < 1 || idx > contactCount)
 	{
 		std::cout << "Invalid index\n";
 		return;
