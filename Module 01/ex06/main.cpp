@@ -14,14 +14,10 @@ int main(int argc, char** argv) {
 	switch (i)
 	{
 		case 0:  harl.complain("DEBUG");
-		// fallthrough
 		case 1:  harl.complain("INFO");
-		// fallthrough
 		case 2:  harl.complain("WARNING");
-		// fallthrough
 		case 3:  harl.complain("ERROR");break;
 		default: std::cout << "[ Probably complaining about insignificant problems ]" << std::endl;return 0;
 	}
-	
 	return 0;
 }
