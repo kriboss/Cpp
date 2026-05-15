@@ -11,17 +11,14 @@ Fixed const Point::getY() const {
 Point::Point() : x(0), y(0) {
 }
 
-Point::Point(Fixed const x, Fixed const y) : x(x), y(y) {
+Point::Point(float const x, float const y) : x(x), y(y) {
 }
 
 Point::Point(Point const& other) : x(other.x), y(other.y) {
 }
 
 Point& Point::operator=(Point const &other) {
-	if (this != &other) {
-		// this->x = other.x;
-		// this->y = other.y;
-	}
+	(void)other;
 	return *this;
 }
 

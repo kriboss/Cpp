@@ -8,12 +8,10 @@ all: $(NAME)
 $(NAME): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(SRC)
 
-
 clean:
-	rm -f *.o
+	rm -f $(NAME)
 
 fclean: clean
-	rm -f $(NAME)
 
 re: fclean all
 

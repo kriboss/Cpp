@@ -2,8 +2,8 @@
 
 int	main()
 {
-	ClapTrap clap("Mario");
-	clap.attack("Luigi");
+	ClapTrap clap("Suarez");
+	clap.attack("Chiellini");
 	clap.takeDamage(4);
 	clap.beRepaired(5);
 }

@@ -2,7 +2,7 @@
 
 int	main()
 {
-	FragTrap frag("Mario");
-	frag.attack("Luigi");
+	FragTrap frag("Suarez");
+	frag.attack("Chiellini");
 	frag.highFivesGuys();
 }

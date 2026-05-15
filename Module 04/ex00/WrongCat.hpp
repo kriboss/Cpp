@@ -6,14 +6,12 @@
 # include <string>
 # include <iostream>
 
-class WrongCat  : public WrongAnimal {
-	protected:
-		std::string		type;
+class WrongCat : public WrongAnimal {
 	public:
 		WrongCat();
 		WrongCat(const WrongCat &other);
 		WrongCat& operator=(const WrongCat &other);
-		void	makeSound() const;
+		void makeSound() const;
 		~WrongCat();
 };
 

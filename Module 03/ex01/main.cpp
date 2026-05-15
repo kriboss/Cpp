@@ -2,7 +2,7 @@
 
 int	main()
 {
-	ScavTrap scav("Mario");
-	scav.attack("Luigi");
+	ScavTrap scav("Suarez");
+	scav.attack("Chiellini");
 	scav.guardGate();
 }

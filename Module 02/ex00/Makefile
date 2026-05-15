@@ -9,8 +9,11 @@ $(NAME): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(SRC)
 
 clean:
+	rm -f *.o
+
+fclean: clean
 	rm -f $(NAME)
 
-re: clean all
+re: fclean all
 
-.PHONY: all clean re
+.PHONY: all clean fclean re

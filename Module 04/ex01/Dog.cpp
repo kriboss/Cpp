@@ -1,6 +1,7 @@
 #include "Dog.hpp"
 
-Dog::Dog() : type("Dog") {
+Dog::Dog() {
+	type = "Dog";
 	brain = new Brain();
 	std::cout << type << " constructed." << std::endl;
 }

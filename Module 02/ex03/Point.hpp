@@ -9,7 +9,7 @@ class Point {
 		Fixed const y;
 	public:
 		Point();
-		Point(Fixed const x, Fixed const y);
+		Point(float const x, float const y);
 		Point(Point const& other);
 		Point& operator=( Point const& other);
 		Fixed const getX() const;

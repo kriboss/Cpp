@@ -1,6 +1,7 @@
 #include "Cat.hpp"
 
-Cat::Cat() : type("Cat") {
+Cat::Cat() {
+	type = "Cat";
 	brain = new Brain();
 	std::cout << type << " constructed." << std::endl;
 }

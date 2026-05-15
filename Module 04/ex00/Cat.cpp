@@ -1,7 +1,8 @@
 #include "Cat.hpp"
 
-Cat::Cat() : type("Cat") {
-	std::cout << type << " constructed." << std::endl;
+Cat::Cat() {
+       type = "Cat";
+       std::cout << type << " constructed." << std::endl;
 }
 
 Cat::Cat(const Cat &other) : Animal(other) {
@@ -10,7 +11,7 @@ Cat::Cat(const Cat &other) : Animal(other) {
 
 Cat& Cat::operator=(const Cat &other) {
 	if (this != &other) {
-		this->type = other.type;
+	       Animal::operator=(other);
 	}
 	std::cout << "Cat copy assignment operator called" << std::endl;
 	return *this;
