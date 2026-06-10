@@ -1,6 +1,12 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+#include <new>
+#include <limits>
+
 #include <exception>
 
 template <typename T>

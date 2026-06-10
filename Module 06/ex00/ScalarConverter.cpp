@@ -1,22 +1,31 @@
 #include "ScalarConverter.hpp"
 #include <cstdlib>
+#include <cctype>
 
 static bool isPseudoLiteral(const std::string& s) {
 	return s == "nan" || s == "nanf" || s == "+inf" || s == "-inf" || s == "+inff" || s == "-inff";
 }
 
 static bool isCharLiteral(const std::string& s) {
-	return s.length() == 1 && !std::isdigit(static_cast<unsigned char>(s[0]));
+	if (s.length() == 1 && !std::isdigit(static_cast<unsigned char>(s[0])))
+		return true;
+	// handle quoted form like 'a'
+	if (s.length() == 3 && s[0] == '\'' && s[2] == '\'')
+		return true;
+	return false;
 }
 
 static void printChar(double d) {
 	std::cout << "char: ";
 	if (std::isnan(d) || d < std::numeric_limits<char>::min() || d > std::numeric_limits<char>::max())
 		std::cout << "impossible" << std::endl;
-	else if (!std::isprint(static_cast<char>(d)))
+	else {
+		char ch = static_cast<char>(d);
+		if (!std::isprint(static_cast<unsigned char>(ch)))
 		std::cout << "Non displayable" << std::endl;
-	else
-		std::cout << "'" << static_cast<char>(d) << "'" << std::endl;
+		else
+			std::cout << "'" << ch << "'" << std::endl;
+	}
 }
 
 static void printInt(double d) {
@@ -30,10 +39,10 @@ static void printInt(double d) {
 static void printFloat(double d) {
 	std::cout << "float: ";
 	float f = static_cast<float>(d);
-	if (std::isnan(d))
+	if (std::isnan(f))
 		std::cout << "nanf" << std::endl;
-	else if (std::isinf(d))
-		std::cout << (d < 0 ? "-inff" : "+inff") << std::endl;
+	else if (std::isinf(f))
+		std::cout << (f < 0 ? "-inff" : "+inff") << std::endl;
 	else {
 		std::cout.setf(std::ios::fixed);
 		std::cout.precision(1);
