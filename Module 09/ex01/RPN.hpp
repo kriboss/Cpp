@@ -9,7 +9,7 @@ public:
     RPN();
     ~RPN();
 
-    bool evaluate(const std::string &expr, int &result) const;
+    bool evaluate(const std::string &expr, long &result) const;
 };
 
 #endif // RPN_HPP

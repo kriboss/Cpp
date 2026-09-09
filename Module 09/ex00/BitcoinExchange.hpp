@@ -18,6 +18,7 @@ private:
 
     bool isValidDate(const std::string &date) const;
     bool parseLine(const std::string &line, std::string &date, std::string &value) const;
+    bool parseValue(const std::string &text, double &value) const;
     double getRateForDate(const std::string &date) const;
 };
 

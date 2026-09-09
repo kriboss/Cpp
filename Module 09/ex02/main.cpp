@@ -4,15 +4,18 @@
 #include <deque>
 #include <ctime>
 #include <sstream>
+#include <climits>
 
 static bool parseArgs(int argc, char **argv, std::vector<int> &out)
 {
     for (int i = 1; i < argc; ++i)
     {
         std::istringstream ss(argv[i]);
-        int v;
-        if (!(ss >> v)) return false;
-        if (v < 0) return false;
+        long parsed;
+        char extra;
+        if (!(ss >> parsed) || (ss >> extra)) return false;
+        if (parsed <= 0 || parsed > INT_MAX) return false;
+        int v = static_cast<int>(parsed);
         out.push_back(v);
     }
     return true;

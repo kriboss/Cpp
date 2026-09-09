@@ -2,7 +2,16 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cctype>
 #include <cstdlib>
+
+static void trim(std::string &text)
+{
+    while (!text.empty() && std::isspace(static_cast<unsigned char>(text[0])))
+        text.erase(0, 1);
+    while (!text.empty() && std::isspace(static_cast<unsigned char>(text[text.size() - 1])))
+        text.erase(text.size() - 1, 1);
+}
 
 BitcoinExchange::BitcoinExchange()
 {
@@ -19,28 +28,6 @@ bool BitcoinExchange::loadDatabase(const std::string &path)
         return false;
 
     std::string line;
-    // Expect header first line, skip if present
-    if (!std::getline(file, line))
-        return false;
-
-    if (line.find("date") == std::string::npos)
-        ; // first line may already be data
-
-    if (line.find(',') != std::string::npos && line.find("date") != std::string::npos)
-        ; // header, continue reading rest
-    else
-    {
-        // if header not present, process this line as data
-        std::istringstream ss(line);
-        std::string date;
-        std::string rate;
-        if (std::getline(ss, date, ',') && std::getline(ss, rate))
-        {
-            double r = atof(rate.c_str());
-            _db[date] = r;
-        }
-    }
-
     while (std::getline(file, line))
     {
         if (line.empty())
@@ -48,12 +35,14 @@ bool BitcoinExchange::loadDatabase(const std::string &path)
         std::istringstream ss(line);
         std::string date;
         std::string rate;
-        if (!std::getline(ss, date, ','))
+        if (!std::getline(ss, date, ',') || !std::getline(ss, rate))
             continue;
-        if (!std::getline(ss, rate))
+        trim(date);
+        trim(rate);
+        double parsedRate;
+        if (!isValidDate(date) || !parseValue(rate, parsedRate))
             continue;
-        double r = atof(rate.c_str());
-        _db[date] = r;
+        _db[date] = parsedRate;
     }
 
     return !_db.empty();
@@ -70,7 +59,7 @@ bool BitcoinExchange::isValidDate(const std::string &date) const
     {
         if (i == 4 || i == 7)
             continue;
-        if (!std::isdigit(date[i]))
+        if (!std::isdigit(static_cast<unsigned char>(date[i])))
             return false;
     }
     int year = std::atoi(date.substr(0,4).c_str());
@@ -78,9 +67,14 @@ bool BitcoinExchange::isValidDate(const std::string &date) const
     int day = std::atoi(date.substr(8,2).c_str());
     if (month < 1 || month > 12)
         return false;
-    if (day < 1 || day > 31)
+    if (year < 1 || month < 1 || month > 12 || day < 1)
         return false;
-    (void)year;
+    int daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    bool leap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+    if (leap)
+        daysInMonth[1] = 29;
+    if (day > daysInMonth[month - 1])
+        return false;
     return true;
 }
 
@@ -91,11 +85,19 @@ bool BitcoinExchange::parseLine(const std::string &line, std::string &date, std:
         return false;
     date = line.substr(0, sep);
     value = line.substr(sep + 1);
-    // trim
-    while (!date.empty() && std::isspace(date[0])) date.erase(date.begin());
-    while (!date.empty() && std::isspace(date[date.size()-1])) date.erase(date.size()-1,1);
-    while (!value.empty() && std::isspace(value[0])) value.erase(value.begin());
-    while (!value.empty() && std::isspace(value[value.size()-1])) value.erase(value.size()-1,1);
+    trim(date);
+    trim(value);
+    return true;
+}
+
+bool BitcoinExchange::parseValue(const std::string &text, double &value) const
+{
+    if (text.empty())
+        return false;
+    std::istringstream stream(text);
+    char extra;
+    if (!(stream >> value) || (stream >> extra))
+        return false;
     return true;
 }
 
@@ -128,48 +130,11 @@ void BitcoinExchange::processInput(const std::string &path) const
         return;
     }
     std::string line;
-    if (!std::getline(file, line))
-        return;
-    // skip header if matches
-    if (line.find("date") != std::string::npos && line.find("value") != std::string::npos)
-    {
-        // header skipped
-    }
-    else
-    {
-        // process first line as data
-        std::string date, value;
-        if (parseLine(line, date, value))
-        {
-            if (!isValidDate(date))
-            {
-                std::cout << "Error: bad input => " << date << std::endl;
-            }
-            else
-            {
-                double val = atof(value.c_str());
-                if (value.empty() || (value.size() == 1 && value[0] == '\0'))
-                    std::cout << "Error: bad input => " << date << std::endl;
-                else if (val < 0)
-                    std::cout << "Error: not a positive number." << std::endl;
-                else if (val > 1000)
-                    std::cout << "Error: too large a number." << std::endl;
-                else
-                {
-                    double rate = getRateForDate(date);
-                    std::cout << date << " => " << value << " = " << (val * rate) << std::endl;
-                }
-            }
-        }
-        else
-        {
-            std::cout << "Error: bad input => " << line << std::endl;
-        }
-    }
-
     while (std::getline(file, line))
     {
         if (line.empty())
+            continue;
+        if (line == "date | value")
             continue;
         std::string date, value;
         if (!parseLine(line, date, value))
@@ -182,21 +147,12 @@ void BitcoinExchange::processInput(const std::string &path) const
             std::cout << "Error: bad input => " << date << std::endl;
             continue;
         }
-        // parse value
-        bool badnum = false;
-        for (size_t i = 0; i < value.size(); ++i)
-        {
-            if (!(std::isdigit(value[i]) || value[i] == '.' || value[i] == '+' || value[i] == '-'))
-            {
-                badnum = true; break;
-            }
-        }
-        if (badnum || value.empty())
+        double val;
+        if (!parseValue(value, val))
         {
             std::cout << "Error: bad input => " << value << std::endl;
             continue;
         }
-        double val = atof(value.c_str());
         if (val < 0)
         {
             std::cout << "Error: not a positive number." << std::endl;
